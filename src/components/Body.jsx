@@ -16,11 +16,11 @@ const Body = () => {
           </button>
         </Link>
         <button className="px-6 py-3 font-semibold text-white bg-black rounded-md hover:bg-gray-700">
-          Learn More
+          About US
         </button>
         <Link to="/Documentation">
           <button className="px-6 py-3 font-semibold text-white border rounded-md ">
-            Get Started
+            Documentation
           </button>
         </Link>
       </div>
