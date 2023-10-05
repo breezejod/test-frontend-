@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
+import Header from './Header';
 
 const Projecttodo = () => {
   const [projects, setProjects] = useState([]);
@@ -10,6 +12,51 @@ const Projecttodo = () => {
   const [projectDescriptions, setProjectDescriptions] = useState({});
   const [projectDueDates, setProjectDueDates] = useState({});
   const [sortCriteria, setSortCriteria] = useState('name'); // Default sorting by name
+
+  const fetchProjects = async () => {
+    try {
+      const response = await axios.get('/api/v1/projects'); // Replace with your API endpoint
+      setProjects(response.data); // Assuming the response contains an array of projects
+    } catch (error) {
+      console.error('Error fetching projects:', error);
+    }
+  };
+
+  const createProject = async () => {
+    try {
+      const newProjectData = {
+        // ... Construct your project data here ...
+      };
+      const response = await axios.post('/api/v1/projects', newProjectData); // Replace with your API endpoint
+      setProjects([...projects, response.data]); // Assuming the response contains the created project
+      setNewProject('');
+    } catch (error) {
+      console.error('Error creating project:', error);
+    }
+  };
+
+  const updateProject = async (updatedProject) => {
+    try {
+      const response = await axios.put(`/api/v1/projects/${updatedProject._id}`, updatedProject); // Replace with your API endpoint
+      const updatedProjects = projects.map((project) =>
+        project._id === updatedProject._id ? response.data : project
+      );
+      setProjects(updatedProjects);
+      setEditingProject(null);
+    } catch (error) {
+      console.error('Error updating project:', error);
+    }
+  };
+
+  const deleteProject = async (projectToDelete) => {
+    try {
+      await axios.delete(`/api/v1/projects/${projectToDelete._id}`); // Replace with your API endpoint
+      const updatedProjects = projects.filter((project) => project._id !== projectToDelete._id);
+      setProjects(updatedProjects);
+    } catch (error) {
+      console.error('Error deleting project:', error);
+    }
+  };
 
   const addProject = () => {
     if (newProject.trim() !== '') {
@@ -110,8 +157,10 @@ const Projecttodo = () => {
   }, [projects]);
 
   return (
-    <div className='bg-black h-[94vh]'>
-      <div className="container p-4 mx-auto mt-8 text-white bg-black">
+    <>
+    <Header/>
+    <div className='bg-black h-[94vh] mt-0' >
+      <div className="container p-4 mx-auto mt-0 text-white bg-black">
         <h1 className="mb-4 text-2xl font-semibold text-center">Project Management</h1>
         <form onSubmit={handleAddProject}>
           <div className="flex">
@@ -282,6 +331,7 @@ const Projecttodo = () => {
         </Link>
       </div>
     </div>
+    </>
   );
 };
 

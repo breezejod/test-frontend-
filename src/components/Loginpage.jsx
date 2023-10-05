@@ -4,7 +4,7 @@ const Loginpage = () => {
   return (
     <div className="flex items-center justify-center min-h-screen bg-black">
       <div className="p-8 bg-purple-700 rounded-lg w-80">
-        <form action="/api/v1/loginPage" method="POST">
+        <form action="/api/v1/loginPage">
           <h1 className="mb-4 text-2xl font-semibold text-black">Login</h1>
 
           <input
