@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 const Login = () => {
   const buttonStyle = {
     padding: "30px",
-    border: "2px solid #800080",
+    border: "2px solid #a855f7",
     backgroundColor: "purple",
     borderRadius: "10px",
     transition: "background-color 0.3s, color 0.3s",

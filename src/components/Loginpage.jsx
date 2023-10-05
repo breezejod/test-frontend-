@@ -3,7 +3,7 @@ import React from "react";
 const Loginpage = () => {
   return (
     <div className="flex items-center justify-center min-h-screen bg-black">
-      <div className="p-8 bg-purple-400 rounded-lg w-80">
+      <div className="p-8 bg-purple-700 rounded-lg w-80">
         <form action="/api/v1/loginPage" method="POST">
           <h1 className="mb-4 text-2xl font-semibold text-black">Login</h1>
 
@@ -33,7 +33,7 @@ const Loginpage = () => {
 
           <button
             type="submit"
-            className="px-6 py-2 text-white bg-purple-700 rounded-lg hover:text-black hover:bg-purple-200"
+            className="px-6 py-2 text-black bg-purple-200 rounded-lg hover:text-black hover:bg-purple-200"
           >
             Log in
           </button>
