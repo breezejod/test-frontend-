@@ -18,7 +18,7 @@ const Loginpage = () => {
           <input
             type="email"
             id="email"
-            name="email"
+            name="email"   
             placeholder="Email"
             className="w-full px-4 py-2 mb-4 bg-gray-300 rounded-lg"
           />
