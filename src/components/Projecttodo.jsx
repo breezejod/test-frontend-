@@ -95,18 +95,19 @@ const Projecttodo = () => {
   }, [projects]);
 
   return (
-    <div className="container p-4 mx-auto mt-8">
+    <div className='bg-black h-[94vh]'>
+    <div className="container p-4 mx-auto mt-8 text-white bg-black">
       <h1 className="mb-4 text-2xl font-semibold text-center">Project Management</h1>
       <form onSubmit={handleAddProject}>
         <div className="flex">
           <input
             type="text"
-            className="w-full p-2 border rounded-l"
+            className="w-full p-2 text-white bg-purple-800 border rounded-l"
             placeholder="Add a project..."
             value={newProject}
             onChange={(e) => setNewProject(e.target.value)}
           />
-          <button type="submit" className="p-2 text-white bg-blue-500 rounded-r">
+          <button type="submit" className="p-2 bg-purple-500 rounded-r">
             Add
           </button>
         </div>
@@ -122,7 +123,7 @@ const Projecttodo = () => {
                 [newProject]: e.target.value,
               })
             }
-            className="w-full p-2 border rounded"
+            className="w-full p-2 text-white bg-purple-800 border rounded"
           />
         </div>
         <div className="mt-2">
@@ -136,7 +137,7 @@ const Projecttodo = () => {
                 [newProject]: e.target.value,
               })
             }
-            className="w-full p-2 border rounded"
+            className="w-full p-2 text-white bg-purple-800 border rounded"
           />
         </div>
       </form>
@@ -147,7 +148,7 @@ const Projecttodo = () => {
           <select
             value={sortCriteria}
             onChange={(e) => setSortCriteria(e.target.value)}
-            className="p-1 ml-2 rounded"
+            className="p-1 ml-2 text-white bg-purple-800 rounded"
           >
             <option value="name">Name</option>
             <option value="status">Status</option>
@@ -157,7 +158,7 @@ const Projecttodo = () => {
         {incompleteProjects.map((project) => (
           <div
             key={project.name}
-            className={`flex items-center justify-between p-3 m-2 bg-gray-200 rounded-lg ${
+            className={`flex items-center justify-between p-3 m-2 bg-purple-600 rounded-lg ${
               editingProject === project ? 'bg-yellow-100' : ''
             }`}
             onClick={() => toggleProjectStatus(project)}
@@ -188,13 +189,13 @@ const Projecttodo = () => {
                 </div>
                 <div>
                   <button
-                    className="p-1 mb-2 ml-2 text-white bg-blue-500 rounded hover:bg-blue-600"
+                    className="p-1 mb-2 ml-2 text-white bg-purple-500 rounded hover:bg-purple-700"
                     onClick={() => editProject(project)}
                   >
                     Edit
                   </button>
                   <button
-                    className="p-1 ml-2 text-white bg-red-500 rounded hover:bg-red-600"
+                    className="p-1 ml-2 text-white bg-red-500 rounded hover:bg-red-700"
                     onClick={(e) => removeProject(e, project)}
                   >
                     Remove
@@ -210,7 +211,7 @@ const Projecttodo = () => {
         {completedProjects.map((project) => (
           <div
             key={project.name}
-            className={`flex items-center justify-between p-3 m-2 bg-green-200 rounded-lg ${
+            className={`flex items-center justify-between p-3 m-2 bg-purple-600 rounded-lg ${
               editingProject === project ? 'bg-yellow-100' : ''
             }`}
             onClick={() => toggleProjectStatus(project)}
@@ -241,13 +242,13 @@ const Projecttodo = () => {
                 </div>
                 <div>
                   <button
-                    className="p-1 text-white bg-blue-500 rounded hover:bg-blue-600"
+                    className="p-1 text-white bg-purple-500 rounded hover:bg-purple-700"
                     onClick={() => editProject(project)}
                   >
                     Edit
                   </button>
                   <button
-                    className="p-1 ml-2 text-white bg-red-500 rounded hover:bg-red-600"
+                    className="p-1 ml-2 text-white bg-red-500 rounded hover:bg-red-700"
                     onClick={(e) => removeProject(e, project)}
                   >
                     Remove
@@ -258,9 +259,10 @@ const Projecttodo = () => {
           </div>
         ))}
       </div>
-      <Link to="/Loginpage" className="block mt-4 text-center text-blue-500 transition duration-300 hover:text-blue-600">
+      <Link to="/Loginpage" className="block mt-4 text-center text-purple-200 transition duration-300 hover:text-blue-600">
         Go to Login Page
       </Link>
+    </div>
     </div>
   );
 };

@@ -2,10 +2,10 @@ import React from "react";
 
 const Loginpage = () => {
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-200">
-      <div className="p-8 bg-gray-100 rounded-lg w-80">
+    <div className="flex items-center justify-center min-h-screen bg-black">
+      <div className="p-8 bg-purple-400 rounded-lg w-80">
         <form action="/api/v1/loginPage" method="POST">
-          <h1 className="mb-4 text-2xl font-semibold text-blue-400">Login</h1>
+          <h1 className="mb-4 text-2xl font-semibold text-black">Login</h1>
 
           <input
             type="text"
@@ -33,7 +33,7 @@ const Loginpage = () => {
 
           <button
             type="submit"
-            className="px-6 py-2 text-white bg-blue-400 rounded-lg hover:bg-blue-600"
+            className="px-6 py-2 text-white bg-purple-700 rounded-lg hover:text-black hover:bg-purple-200"
           >
             Log in
           </button>
