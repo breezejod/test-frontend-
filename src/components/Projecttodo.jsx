@@ -15,7 +15,7 @@ const Projecttodo = () => {
     if (newProject.trim() !== '') {
       const newProjectData = {
         name: newProject,
-        timer: 0,
+        timer: 0, // Initialize the timer to 0
         status: 'Incomplete',
         description: projectDescriptions[newProject] || '',
         dueDate: projectDueDates[newProject] || '',
@@ -60,6 +60,21 @@ const Projecttodo = () => {
     addProject();
   };
 
+  // Timer logic
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      // Increment timers for incomplete projects
+      const updatedProjects = projects.map((project) =>
+        project.status === 'Incomplete'
+          ? { ...project, timer: project.timer + 1 }
+          : project
+      );
+      setProjects(updatedProjects);
+    }, 1000); // Update timer every 1 second
+
+    return () => clearInterval(intervalId); // Cleanup on component unmount
+  }, [projects]);
+
   // Sorting the projects based on the selected sorting criteria
   useEffect(() => {
     const sortedProjects = [...projects];
@@ -96,173 +111,176 @@ const Projecttodo = () => {
 
   return (
     <div className='bg-black h-[94vh]'>
-    <div className="container p-4 mx-auto mt-8 text-white bg-black">
-      <h1 className="mb-4 text-2xl font-semibold text-center">Project Management</h1>
-      <form onSubmit={handleAddProject}>
-        <div className="flex">
-          <input
-            type="text"
-            className="w-full p-2 text-white bg-purple-800 border rounded-l"
-            placeholder="Add a project..."
-            value={newProject}
-            onChange={(e) => setNewProject(e.target.value)}
-          />
-          <button type="submit" className="p-2 bg-purple-500 rounded-r">
-            Add
-          </button>
-        </div>
-        <div className="mt-2">
-          <label>Description:</label>
-          <input
-            type="text"
-            placeholder="Add description..."
-            value={projectDescriptions[newProject] || ''}
-            onChange={(e) =>
-              setProjectDescriptions({
-                ...projectDescriptions,
-                [newProject]: e.target.value,
-              })
-            }
-            className="w-full p-2 text-white bg-purple-800 border rounded"
-          />
-        </div>
-        <div className="mt-2">
-          <label>Due Date:</label>
-          <input
-            type="date"
-            value={projectDueDates[newProject] || ''}
-            onChange={(e) =>
-              setProjectDueDates({
-                ...projectDueDates,
-                [newProject]: e.target.value,
-              })
-            }
-            className="w-full p-2 text-white bg-purple-800 border rounded"
-          />
-        </div>
-      </form>
-      <div className="mt-4">
-        <h2 className="mb-2 text-xl font-semibold">Incomplete Projects</h2>
-        <div className="mb-2">
-          <label>Sort By:</label>
-          <select
-            value={sortCriteria}
-            onChange={(e) => setSortCriteria(e.target.value)}
-            className="p-1 ml-2 text-white bg-purple-800 rounded"
-          >
-            <option value="name">Name</option>
-            <option value="status">Status</option>
-            <option value="dueDate">Due Date</option>
-          </select>
-        </div>
-        {incompleteProjects.map((project) => (
-          <div
-            key={project.name}
-            className={`flex items-center justify-between p-3 m-2 bg-purple-600 rounded-lg ${
-              editingProject === project ? 'bg-yellow-100' : ''
-            }`}
-            onClick={() => toggleProjectStatus(project)}
-          >
-            {editingProject === project ? (
-              <>
-                <input
-                  type="text"
-                  value={project.name}
-                  onChange={(e) => updateProjectName(e.target.value)}
-                  onBlur={() => setEditingProject(null)}
-                  className="w-full px-2 border rounded"
-                />
-                <button
-                  onClick={() => setEditingProject(null)}
-                  className="p-1 bg-gray-400 rounded hover:bg-gray-500"
-                >
-                  Done
-                </button>
-              </>
-            ) : (
-              <>
-                <div className="w-full">
-                  <h3 className="text-lg font-semibold">{project.name}</h3>
-                  <p className='p-2'>Timer: {project.timer} seconds</p>
-                  <p className="p-2 mb-2 border rounded">Description: {project.description}</p>
-                  <p className="p-2 border rounded">Due Date: {project.dueDate}</p>
-                </div>
-                <div>
-                  <button
-                    className="p-1 mb-2 ml-2 text-white bg-purple-500 rounded hover:bg-purple-700"
-                    onClick={() => editProject(project)}
-                  >
-                    Edit
-                  </button>
-                  <button
-                    className="p-1 ml-2 text-white bg-red-500 rounded hover:bg-red-700"
-                    onClick={(e) => removeProject(e, project)}
-                  >
-                    Remove
-                  </button>
-                </div>
-              </>
-            )}
+      <div className="container p-4 mx-auto mt-8 text-white bg-black">
+        <h1 className="mb-4 text-2xl font-semibold text-center">Project Management</h1>
+        <form onSubmit={handleAddProject}>
+          <div className="flex">
+            <input
+              type="text"
+              className="w-full p-2 text-white bg-purple-800 border rounded-l"
+              placeholder="Add a project..."
+              value={newProject}
+              onChange={(e) => setNewProject(e.target.value)}
+            />
+            <button type="submit" className="p-2 bg-purple-500 rounded-r">
+              Add
+            </button>
           </div>
-        ))}
-      </div>
-      <div className="mt-4">
-        <h2 className="mb-2 text-xl font-semibold">Completed Projects</h2>
-        {completedProjects.map((project) => (
-          <div
-            key={project.name}
-            className={`flex items-center justify-between p-3 m-2 bg-purple-600 rounded-lg ${
-              editingProject === project ? 'bg-yellow-100' : ''
-            }`}
-            onClick={() => toggleProjectStatus(project)}
-          >
-            {editingProject === project ? (
-              <>
-                <input
-                  type="text"
-                  value={project.name}
-                  onChange={(e) => updateProjectName(e.target.value)}
-                  onBlur={() => setEditingProject(null)}
-                  className="w-full px-2 border rounded"
-                />
-                <button
-                  onClick={() => setEditingProject(null)}
-                  className="p-1 bg-gray-400 rounded hover:bg-gray-500"
-                >
-                  Done
-                </button>
-              </>
-            ) : (
-              <>
-                <div className="w-full">
-                  <h3 className="text-lg font-semibold">{project.name}</h3>
-                  <p>Timer: {project.timer} seconds</p>
-                  <p className="p-2 mb-2 border rounded">Description: {project.description}</p>
-                  <p className="p-2 border rounded">Due Date: {project.dueDate}</p>
-                </div>
-                <div>
-                  <button
-                    className="p-1 text-white bg-purple-500 rounded hover:bg-purple-700"
-                    onClick={() => editProject(project)}
-                  >
-                    Edit
-                  </button>
-                  <button
-                    className="p-1 ml-2 text-white bg-red-500 rounded hover:bg-red-700"
-                    onClick={(e) => removeProject(e, project)}
-                  >
-                    Remove
-                  </button>
-                </div>
-              </>
-            )}
+          <div className="mt-2">
+            <label>Description:</label>
+            <input
+              type="text"
+              placeholder="Add description..."
+              value={projectDescriptions[newProject] || ''}
+              onChange={(e) =>
+                setProjectDescriptions({
+                  ...projectDescriptions,
+                  [newProject]: e.target.value,
+                })
+              }
+              className="w-full p-2 text-white bg-purple-800 border rounded"
+            />
           </div>
-        ))}
+          <div className="mt-2">
+            <label>Due Date:</label>
+            <input
+              type="date"
+              value={projectDueDates[newProject] || ''}
+              onChange={(e) =>
+                setProjectDueDates({
+                  ...projectDueDates,
+                  [newProject]: e.target.value,
+                })
+              }
+              className="w-full p-2 text-white bg-purple-800 border rounded"
+            />
+          </div>
+        </form>
+        <div className="mt-4">
+          <h2 className="mb-2 text-xl font-semibold">Incomplete Projects</h2>
+          <div className="mb-2">
+            <label>Sort By:</label>
+            <select
+              value={sortCriteria}
+              onChange={(e) => setSortCriteria(e.target.value)}
+              className="p-1 ml-2 text-white bg-purple-800 rounded"
+            >
+              <option value="name">Name</option>
+              <option value="status">Status</option>
+              <option value="dueDate">Due Date</option>
+            </select>
+          </div>
+          {incompleteProjects.map((project) => (
+            <div
+              key={project.name}
+              className={`flex items-center justify-between p-3 m-2 bg-purple-600 rounded-lg ${
+                editingProject === project ? 'bg-yellow-100' : ''
+              }`}
+              onClick={() => toggleProjectStatus(project)}
+            >
+              {editingProject === project ? (
+                <>
+                  <input
+                    type="text"
+                    value={project.name}
+                    onChange={(e) => updateProjectName(e.target.value)}
+                    onBlur={() => setEditingProject(null)}
+                    className="w-full px-2 border rounded"
+                  />
+                  <button
+                    onClick={() => setEditingProject(null)}
+                    className="p-1 bg-gray-400 rounded hover:bg-gray-500"
+                  >
+                    Done
+                  </button>
+                </>
+              ) : (
+                <>
+                  <div className="w-full">
+                    <h3 className="text-lg font-semibold">{project.name}</h3>
+                    <p className='p-2'>Timer: {project.timer} seconds</p>
+                    <p className="p-2 mb-2 border rounded">Description: {project.description}</p>
+                    <p className="p-2 border rounded">Due Date: {project.dueDate}</p>
+                  </div>
+                  <div>
+                    <button
+                      className="p-1 mb-2 ml-2 text-white bg-purple-500 rounded hover:bg-purple-700"
+                      onClick={() => editProject(project)}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      className="p-1 ml-2 text-white bg-red-500 rounded hover:bg-red-700"
+                      onClick={(e) => removeProject(e, project)}
+                    >
+                      Remove
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
+          ))}
+        </div>
+        <div className="mt-4">
+          <h2 className="mb-2 text-xl font-semibold">Completed Projects</h2>
+          {completedProjects.map((project) => (
+            <div
+              key={project.name}
+              className={`flex items-center justify-between p-3 m-2 bg-purple-600 rounded-lg ${
+                editingProject === project ? 'bg-yellow-100' : ''
+              }`}
+              onClick={() => toggleProjectStatus(project)}
+            >
+              {editingProject === project ? (
+                <>
+                  <input
+                    type="text"
+                    value={project.name}
+                    onChange={(e) => updateProjectName(e.target.value)}
+                    onBlur={() => setEditingProject(null)}
+                    className="w-full px-2 border rounded"
+                  />
+                  <button
+                    onClick={() => setEditingProject(null)}
+                    className="p-1 bg-gray-400 rounded hover:bg-gray-500"
+                  >
+                    Done
+                  </button>
+                </>
+              ) : (
+                <>
+                  <div className="w-full">
+                    <h3 className="text-lg font-semibold">{project.name}</h3>
+                    <p>Timer: {project.timer} seconds</p>
+                    <p className="p-2 mb-2 border rounded">Description: {project.description}</p>
+                    <p className="p-2 border rounded">Due Date: {project.dueDate}</p>
+                  </div>
+                  <div>
+                    <button
+                      className="p-1 text-white bg-purple-500 rounded hover:bg-purple-700"
+                      onClick={() => editProject(project)}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      className="p-1 ml-2 text-white bg-red-500 rounded hover:bg-red-700"
+                      onClick={(e) => removeProject(e, project)}
+                    >
+                      Remove
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
+          ))}
+        </div>
+        <Link
+          to="/Loginpage"
+          className="block mt-4 text-center text-purple-200 transition duration-300 hover:text-blue-600"
+        >
+          Go to Login Page
+        </Link>
       </div>
-      <Link to="/Loginpage" className="block mt-4 text-center text-purple-200 transition duration-300 hover:text-blue-600">
-        Go to Login Page
-      </Link>
-    </div>
     </div>
   );
 };
