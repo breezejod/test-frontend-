@@ -7,10 +7,19 @@ const Projecttodo = () => {
   const [editingProject, setEditingProject] = useState(null);
   const [completedProjects, setCompletedProjects] = useState([]);
   const [incompleteProjects, setIncompleteProjects] = useState([]);
+  const [projectDescriptions, setProjectDescriptions] = useState({});
+  const [projectDueDates, setProjectDueDates] = useState({});
+  const [sortCriteria, setSortCriteria] = useState('name'); // Default sorting by name
 
   const addProject = () => {
     if (newProject.trim() !== '') {
-      const newProjectData = { name: newProject, timer: 0, status: 'Incomplete' };
+      const newProjectData = {
+        name: newProject,
+        timer: 0,
+        status: 'Incomplete',
+        description: projectDescriptions[newProject] || '',
+        dueDate: projectDueDates[newProject] || '',
+      };
       setProjects([...projects, newProjectData]);
       setNewProject('');
     }
@@ -37,7 +46,10 @@ const Projecttodo = () => {
   const toggleProjectStatus = (projectToToggle) => {
     const updatedProjects = projects.map((project) =>
       project === projectToToggle
-        ? { ...project, status: project.status === 'Incomplete' ? 'Completed' : 'Incomplete' }
+        ? {
+            ...project,
+            status: project.status === 'Incomplete' ? 'Completed' : 'Incomplete',
+          }
         : project
     );
     setProjects(updatedProjects);
@@ -48,26 +60,32 @@ const Projecttodo = () => {
     addProject();
   };
 
+  // Sorting the projects based on the selected sorting criteria
   useEffect(() => {
-    const projectTimers = {};
+    const sortedProjects = [...projects];
 
-    projects.forEach((project) => {
-      projectTimers[project.name] = setInterval(() => {
-        setProjects((prevProjects) =>
-          prevProjects.map((prevProject) =>
-            prevProject.name === project.name
-              ? { ...prevProject, timer: prevProject.timer + 1 }
-              : prevProject
-          )
-        );
-      }, 1000);
-    });
+    switch (sortCriteria) {
+      case 'name':
+        sortedProjects.sort((a, b) => a.name.localeCompare(b.name));
+        break;
+      case 'status':
+        sortedProjects.sort((a, b) => a.status.localeCompare(b.status));
+        break;
+      case 'dueDate':
+        sortedProjects.sort((a, b) => {
+          const dateA = new Date(a.dueDate);
+          const dateB = new Date(b.dueDate);
+          return dateA - dateB;
+        });
+        break;
+      default:
+        // Default sorting by name
+        sortedProjects.sort((a, b) => a.name.localeCompare(b.name));
+        break;
+    }
 
-    return () => {
-      // Clear all timers when the component unmounts
-      Object.values(projectTimers).forEach((timer) => clearInterval(timer));
-    };
-  }, [projects]);
+    setProjects(sortedProjects);
+  }, [sortCriteria, projects]);
 
   useEffect(() => {
     const completed = projects.filter((project) => project.status === 'Completed');
@@ -78,7 +96,7 @@ const Projecttodo = () => {
 
   return (
     <div className="container p-4 mx-auto mt-8">
-      <h1 className="mb-4 text-2xl font-semibold">Project Management</h1>
+      <h1 className="mb-4 text-2xl font-semibold text-center">Project Management</h1>
       <form onSubmit={handleAddProject}>
         <div className="flex">
           <input
@@ -92,13 +110,54 @@ const Projecttodo = () => {
             Add
           </button>
         </div>
+        <div className="mt-2">
+          <label>Description:</label>
+          <input
+            type="text"
+            placeholder="Add description..."
+            value={projectDescriptions[newProject] || ''}
+            onChange={(e) =>
+              setProjectDescriptions({
+                ...projectDescriptions,
+                [newProject]: e.target.value,
+              })
+            }
+            className="w-full p-2 border rounded"
+          />
+        </div>
+        <div className="mt-2">
+          <label>Due Date:</label>
+          <input
+            type="date"
+            value={projectDueDates[newProject] || ''}
+            onChange={(e) =>
+              setProjectDueDates({
+                ...projectDueDates,
+                [newProject]: e.target.value,
+              })
+            }
+            className="w-full p-2 border rounded"
+          />
+        </div>
       </form>
       <div className="mt-4">
-        <h2>Incomplete Projects</h2>
+        <h2 className="mb-2 text-xl font-semibold">Incomplete Projects</h2>
+        <div className="mb-2">
+          <label>Sort By:</label>
+          <select
+            value={sortCriteria}
+            onChange={(e) => setSortCriteria(e.target.value)}
+            className="p-1 ml-2 rounded"
+          >
+            <option value="name">Name</option>
+            <option value="status">Status</option>
+            <option value="dueDate">Due Date</option>
+          </select>
+        </div>
         {incompleteProjects.map((project) => (
           <div
             key={project.name}
-            className={`flex items-center justify-between p-2 m-2 bg-gray-200 rounded-md ${
+            className={`flex items-center justify-between p-3 m-2 bg-gray-200 rounded-lg ${
               editingProject === project ? 'bg-yellow-100' : ''
             }`}
             onClick={() => toggleProjectStatus(project)}
@@ -110,7 +169,7 @@ const Projecttodo = () => {
                   value={project.name}
                   onChange={(e) => updateProjectName(e.target.value)}
                   onBlur={() => setEditingProject(null)}
-                  className="px-2 border rounded"
+                  className="w-full px-2 border rounded"
                 />
                 <button
                   onClick={() => setEditingProject(null)}
@@ -121,13 +180,15 @@ const Projecttodo = () => {
               </>
             ) : (
               <>
-                <div>
+                <div className="w-full">
                   <h3 className="text-lg font-semibold">{project.name}</h3>
-                  <p>Timer: {project.timer} seconds</p>
+                  <p className='p-2'>Timer: {project.timer} seconds</p>
+                  <p className="p-2 mb-2 border rounded">Description: {project.description}</p>
+                  <p className="p-2 border rounded">Due Date: {project.dueDate}</p>
                 </div>
                 <div>
                   <button
-                    className="p-1 text-white bg-blue-500 rounded hover:bg-blue-600"
+                    className="p-1 mb-2 ml-2 text-white bg-blue-500 rounded hover:bg-blue-600"
                     onClick={() => editProject(project)}
                   >
                     Edit
@@ -145,11 +206,11 @@ const Projecttodo = () => {
         ))}
       </div>
       <div className="mt-4">
-        <h2>Completed Projects</h2>
+        <h2 className="mb-2 text-xl font-semibold">Completed Projects</h2>
         {completedProjects.map((project) => (
           <div
             key={project.name}
-            className={`flex items-center justify-between p-2 m-2 bg-green-200 rounded-md ${
+            className={`flex items-center justify-between p-3 m-2 bg-green-200 rounded-lg ${
               editingProject === project ? 'bg-yellow-100' : ''
             }`}
             onClick={() => toggleProjectStatus(project)}
@@ -161,7 +222,7 @@ const Projecttodo = () => {
                   value={project.name}
                   onChange={(e) => updateProjectName(e.target.value)}
                   onBlur={() => setEditingProject(null)}
-                  className="px-2 border rounded"
+                  className="w-full px-2 border rounded"
                 />
                 <button
                   onClick={() => setEditingProject(null)}
@@ -172,9 +233,11 @@ const Projecttodo = () => {
               </>
             ) : (
               <>
-                <div>
+                <div className="w-full">
                   <h3 className="text-lg font-semibold">{project.name}</h3>
                   <p>Timer: {project.timer} seconds</p>
+                  <p className="p-2 mb-2 border rounded">Description: {project.description}</p>
+                  <p className="p-2 border rounded">Due Date: {project.dueDate}</p>
                 </div>
                 <div>
                   <button
@@ -195,7 +258,7 @@ const Projecttodo = () => {
           </div>
         ))}
       </div>
-      <Link to="/Loginpage" className="block mt-4 text-blue-500">
+      <Link to="/Loginpage" className="block mt-4 text-center text-blue-500 transition duration-300 hover:text-blue-600">
         Go to Login Page
       </Link>
     </div>
