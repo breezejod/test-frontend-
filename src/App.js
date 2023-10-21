@@ -8,6 +8,7 @@ import Projecttodo from "./components/Projecttodo";
 import Healthmonitor from "./components/Healthmonitor";
 import Body from "./components/Body";
 import Documentation from "./components/Documentation";
+import Selection from "./components/Selection";
 
 
 function App() {
@@ -25,6 +26,7 @@ function App() {
           <Route path="/api/v1/loginPage" element={<Projecttodo />} />
           <Route path="/Healthmonitor" element={<Healthmonitor />} />
           <Route path="/Documentation" element={<Documentation />} />
+          <Route path="/Selection" element={<Selection />} />
         </Routes>
       </Router>
     </>
