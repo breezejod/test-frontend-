@@ -10,13 +10,11 @@ import Body from "./components/Body";
 import Documentation from "./components/Documentation";
 import Selection from "./components/Selection";
 
-
 function App() {
   return (
     <>
       <Router>
         <Routes>
-        
           <Route path="/" element={<Body />} />
 
           {/* Define other routes */}
