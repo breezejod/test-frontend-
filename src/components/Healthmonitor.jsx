@@ -15,97 +15,100 @@ const Healthmonitor = () => {
   const [randomFact, setRandomFact] = useState('');
 
   useEffect(() => {
-    // You can implement screen time tracking logic here
-    // For simplicity, I'm using a timer to simulate screen time
+    // Code for screen time tracking
     const timer = setInterval(() => {
       setScreenTime((prevScreenTime) => prevScreenTime + 1);
     }, 1000);
 
-    // Cleanup the timer when the component unmounts
     return () => clearInterval(timer);
   }, []);
 
   useEffect(() => {
-    // Generate a random health fact when the component mounts
+    // Code for generating random health facts
     const randomIndex = Math.floor(Math.random() * healthFacts.length);
     setRandomFact(healthFacts[randomIndex]);
   }, [healthFacts]);
 
   useEffect(() => {
     if (isTabTrackingEnabled) {
-      // Add event listeners for tab changes
-      window.addEventListener('blur', handleTabBlur);
-      window.addEventListener('focus', handleTabFocus);
+      // Code for tab tracking
+      const handleTabChange = () => {
+        setTabChanges((prevTabChanges) => prevTabChanges + 1);
 
-      // Cleanup the event listeners when the component unmounts
+        const searchData = window.location.href;
+        setTabData((prevTabData) => [
+          ...prevTabData,
+          {
+            tabNumber: tabChanges + 1,
+            focusTime: new Date().toLocaleTimeString(),
+            search: searchData,
+          },
+        ]);
+      };
+
+      window.addEventListener('blur', handleTabChange);
+      window.addEventListener('focus', handleTabChange);
+
       return () => {
-        window.removeEventListener('blur', handleTabBlur);
-        window.removeEventListener('focus', handleTabFocus);
+        window.removeEventListener('blur', handleTabChange);
+        window.removeEventListener('focus', handleTabChange);
       };
     }
-  }, [isTabTrackingEnabled]);
-
-  const handleTabBlur = () => {
-    // Clear tab data and track tab changes
-    setTabChanges((prevTabChanges) => prevTabChanges + 1);
-    setTabData([]);
-  };
-
-  const handleTabFocus = () => {
-    // Record information about tab focus
-    const searchData = window.location.href;
-    const tabInfo = {
-      tabNumber: tabChanges + 1,
-      focusTime: new Date().toLocaleTimeString(),
-      search: searchData,
-    };
-    setTabData((prevTabData) => [...prevTabData, tabInfo]);
-  };
+  }, [isTabTrackingEnabled, tabChanges]);
 
   return (
-    <div className="container p-4 mx-auto">
-      <h1 className="mb-4 text-3xl font-semibold">Health Monitor</h1>
-      <div className="p-6 bg-white rounded-lg shadow-lg">
-        <h2 className="mb-4 text-xl font-semibold">Developer Profile</h2>
-        <div className="mb-4">
-          <strong>Name:</strong> Breeze jod
+    <div className="h-screen p-4 text-white bg-black">
+      <div className="max-w-3xl mx-auto">
+        <h1 className="mb-4 text-4xl font-bold text-purple-500">Health Monitor</h1>
+        <div className="p-6 bg-purple-800 rounded-lg shadow-lg">
+          <h2 className="mb-4 text-2xl font-semibold">Developer Profile</h2>
+          <div className="mb-4">
+            <strong>Name:</strong> Breeze Jod
+          </div>
+          <div className="mb-4">
+            <strong>Email:</strong> im.breeze.wtf@example.com
+          </div>
+          <div className="mb-4">
+            <strong>Screen Time:</strong> {screenTime} seconds
+          </div>
+          <div className="mb-4">
+            <strong>Tab Changes:</strong> {tabChanges} times
+          </div>
+          <div className="mb-4">
+            <strong>Random Health Fact:</strong> {randomFact}
+          </div>
+          <div className="mb-4">
+            <label className="flex items-center">
+              <input
+                type="checkbox"
+                checked={isTabTrackingEnabled}
+                onChange={() => setIsTabTrackingEnabled(!isTabTrackingEnabled)}
+                className="mr-2"
+              />
+              Enable Tab Tracking
+            </label>
+          </div>
+          <div>
+            <h3 className="text-2xl font-semibold">Tab Data:</h3>
+            <ul className="pl-6 list-disc">
+              {tabData.map((tab, index) => (
+                <li key={index}>
+                  <span className="text-purple-500">
+                    Tab {tab.tabNumber} focused at {tab.focusTime}
+                  </span>. Searched for:{' '}
+                  <a
+                    href={tab.search}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-400"
+                  >
+                    {tab.search}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
-        <div className="mb-4">
-          <strong>Email:</strong> Im.breeze.wtf@example.com
-        </div>
-        <div className="mb-4">
-          <strong>Screen Time:</strong> {screenTime} seconds
-        </div>
-        <div className="mb-4">
-          <strong>Tab Changes:</strong> {tabChanges} times
-        </div>
-        <div className="mb-4">
-          <strong>Random Health Fact:</strong> {randomFact}
-        </div>
-        <div>
-          <label>
-            <input
-              type="checkbox"
-              checked={isTabTrackingEnabled}
-              onChange={() => setIsTabTrackingEnabled(!isTabTrackingEnabled)}
-            />
-            Enable Tab Tracking
-          </label>
-        </div>
-        <div>
-          <h3>Tab Data:</h3>
-          <ul>
-            {tabData.map((tab, index) => (
-              <li key={index}>
-                Tab {tab.tabNumber} focused at {tab.focusTime}. Searched for:{' '}
-                <a href={tab.search} target="_blank" rel="noopener noreferrer">
-                  {tab.search}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </div>
-        {/* You can add more information and features here */}
       </div>
     </div>
   );
